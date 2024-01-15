@@ -1,0 +1,41 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/spfx-serve.schema.json",
+  "port": 4321,
+  "https": true,
+  "initialPage": "https://kyra1025.sharepoint.com/sites/Adatlistak/_layouts/workbench.aspx",
+  "serveConfigurations": {
+    "default": {
+      "pageUrl": "https://kyra1025.sharepoint.com/sites/Adatlistak/_layouts/workbench.aspx",
+      "fieldCustomizers": {
+        "InternalFieldName": {
+          "id": "9add62cc-116d-4e45-9691-61feda79f72a",
+          "properties": {
+            "sampleText": "Value"
+          }
+        }
+      }
+    },
+    "fieldCostumizer": {
+      "pageUrl": "https://kyra1025.sharepoint.com/sites/Adatlistak/_layouts/workbench.aspx",
+      "fieldCustomizers": {
+        "InternalFieldName": {
+          "id": "9add62cc-116d-4e45-9691-61feda79f72a",
+          "properties": {
+            "sampleText": "Value"
+          }
+        }
+      }
+    },
+    "costumizer": {
+      "pageUrl": "https://{tenantDomain}/SitePages/myPage.aspx",
+      "fieldCustomizers": {
+        "InternalFieldName": {
+          "id": "8d0a27e2-1e34-4151-a29f-c4709b8b1df9",
+          "properties": {
+            "sampleText": "Value"
+          }
+        }
+      }
+    }
+  }
+}

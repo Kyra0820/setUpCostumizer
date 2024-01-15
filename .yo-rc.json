@@ -1,0 +1,22 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "plusBeta": false,
+    "isCreatingSolution": false,
+    "nodeVersion": "18.17.1",
+    "sdksVersions": {
+      "@microsoft/microsoft-graph-client": "3.0.2",
+      "@microsoft/teams-js": "2.12.0"
+    },
+    "version": "1.18.2",
+    "libraryName": "set-up-costumizer",
+    "libraryId": "88447fe2-d6c0-4dda-866d-e87c3141a94a",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "setUpCostumizer",
+    "solutionShortDescription": "setUpCostumizer description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "extension",
+    "extensionType": "FieldCustomizer"
+  }
+}

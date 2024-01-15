@@ -1,0 +1,37 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "set-up-costumizer-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/setUpCostumizer/SetUpCostumizerWebPart.js",
+          "manifest": "./src/webparts/setUpCostumizer/SetUpCostumizerWebPart.manifest.json"
+        }
+      ]
+    },
+    "field-costumizer-field-customizer": {
+      "components": [
+        {
+          "entrypoint": "./lib/extensions/fieldCostumizer/FieldCostumizerFieldCustomizer.js",
+          "manifest": "./src/extensions/fieldCostumizer/FieldCostumizerFieldCustomizer.manifest.json"
+        }
+      ]
+    },
+    "costumizer-field-customizer": {
+      "components": [
+        {
+          "entrypoint": "./lib/extensions/costumizer/CostumizerFieldCustomizer.js",
+          "manifest": "./src/extensions/costumizer/CostumizerFieldCustomizer.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "SetUpCostumizerWebPartStrings": "lib/webparts/setUpCostumizer/loc/{locale}.js",
+    "FieldCostumizerFieldCustomizerStrings": "lib/extensions/fieldCostumizer/loc/{locale}.js",
+    "CostumizerFieldCustomizerStrings": "lib/extensions/costumizer/loc/{locale}.js",
+    "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js"
+  }
+}

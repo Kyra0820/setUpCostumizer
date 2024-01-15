@@ -1,0 +1,45 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "set-up-costumizer-client-side-solution",
+    "id": "88447fe2-d6c0-4dda-866d-e87c3141a94a",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.18.2"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "setUpCostumizer description"
+      },
+      "longDescription": {
+        "default": "setUpCostumizer description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "set-up-costumizer Feature",
+        "description": "The feature that activates elements of the set-up-costumizer solution.",
+        "id": "9294bef4-a6f1-4c7a-83fa-b057bb75fab1",
+        "version": "1.0.0.0",
+        "assets": {
+          "elementManifests": [
+            "elements.xml"
+          ]
+        }
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/set-up-costumizer.sppkg"
+  }
+}
