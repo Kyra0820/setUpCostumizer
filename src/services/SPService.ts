@@ -16,6 +16,7 @@ export default class SPService {
     private static _current: SPService;
     private _spfi: SPFI;
     private _sphttpclient: SPHttpClient;
+    private relativeUrl: string;
     public static get current(): SPService {
         if (!this._current) {
             throw new Error("SPService not initialized");
@@ -34,6 +35,7 @@ export default class SPService {
         this._current = new SPService();
         this._current._spfi = spfi().using(SPFx(context));
         this._current._sphttpclient = context.spHttpClient;
+        this._current.relativeUrl = context.pageContext.web.serverRelativeUrl;
       }
     }
     
@@ -218,14 +220,8 @@ public async AddGearIconFieldCustomizerToList(columnName: string): Promise<void>
     
     try {
       const response = await this._sphttpclient.get(
-        `/_api/web/lists/getbytitle('Students')/items?$filter=Subject eq '${courseName}'&$expand=Students&$select=*,Students/Id,Students/Title`,
-        SPHttpClient.configurations.v1,
-        {
-          headers: {
-            'Accept': 'application/json;odata=nometadata',
-            'odata-version': ''
-          }
-        }
+        `${this.relativeUrl}/_api/web/lists/getbytitle('Students')/items?$filter=Subject eq '${courseName}'&$expand=Students&$select=*,Students/Id,Students/Title`,
+        SPHttpClient.configurations.v1
       );
   
       if (!response.ok) {
@@ -233,7 +229,7 @@ public async AddGearIconFieldCustomizerToList(columnName: string): Promise<void>
       }
   
       const result = await response.json();
-      return result.value.map((item: { Diákok: any; }) => item.Diákok);
+      return result.value.map((item: {Title: any; Students: any; }) => item.Title);
     } catch (error) {
       console.error('Error getting students:', error);
       return [];
@@ -243,13 +239,8 @@ public async AddGearIconFieldCustomizerToList(columnName: string): Promise<void>
    
     try {
       const response = await this._sphttpclient.get(
-        `/_api/web/lists/getbytitle('Tantárgyak')/items(${courseId})?$select=T_x00e1_egyneve`,
-        SPHttpClient.configurations.v1,
-        {
-          headers: {
-            'Accept': 'application/json;odata=nometadata'
-          }
-        }
+        `${this.relativeUrl}/_api/web/lists/getbytitle('Tantárgyak')/items(${courseId})?$select=T_x00e1_egyneve`,
+        SPHttpClient.configurations.v1
       );
   
       if (!response.ok) {
@@ -257,7 +248,7 @@ public async AddGearIconFieldCustomizerToList(columnName: string): Promise<void>
       }
   
       const result = await response.json();
-      return result.Title;
+      return result.T_x00e1_egyneve;
     } catch (error) {
       console.error('Error getting course name:', error);
       return '';

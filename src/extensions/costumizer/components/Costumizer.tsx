@@ -77,8 +77,9 @@ export default class Costumizer extends React.Component<ICostumizerProps, ICostu
    
         const courseId = this.props.itemId;
         const courseName = await SPService.current.getCourseNameById(courseId);
+        console.log(courseName);
         const students = await SPService.current.getStudentsByCourse(courseName);
-
+        console.log(students);
         this.setState({ students });
       }
 
