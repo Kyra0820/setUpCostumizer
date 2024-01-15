@@ -16,7 +16,7 @@ export default class SPService {
     private static _current: SPService;
     private _spfi: SPFI;
     private _sphttpclient: SPHttpClient;
-    private relativeUrl: string;
+    //private relativeUrl: string;
     public static get current(): SPService {
         if (!this._current) {
             throw new Error("SPService not initialized");
@@ -35,7 +35,7 @@ export default class SPService {
         this._current = new SPService();
         this._current._spfi = spfi().using(SPFx(context));
         this._current._sphttpclient = context.spHttpClient;
-        this._current.relativeUrl = context.pageContext.web.serverRelativeUrl;
+        //this._current.relativeUrl = context.pageContext.web.serverRelativeUrl;
       }
     }
     
@@ -217,43 +217,32 @@ public async AddGearIconFieldCustomizerToList(columnName: string): Promise<void>
     }
   }
   public async getStudentsByCourse(courseName: string): Promise<any[]> {
-    
     try {
-      const response = await this._sphttpclient.get(
-        `${this.relativeUrl}/_api/web/lists/getbytitle('Students')/items?$filter=Subject eq '${courseName}'&$expand=Students&$select=*,Students/Id,Students/Title`,
-        SPHttpClient.configurations.v1
-      );
+      const items: any[] = await this._spfi.web.lists.getByTitle('Students').items
+        .filter(`Subject eq '${courseName}'`)
+        .expand('Students')
+        .select('Title', 'Students/Id', 'Students/Title')
+        ();
   
-      if (!response.ok) {
-        throw new Error('Unable to fetch students');
-      }
-  
-      const result = await response.json();
-      return result.value.map((item: {Title: any; Students: any; }) => item.Title);
+      return items.map((item) => ({
+        title: item.Title,
+        students: item.Students
+      }));
     } catch (error) {
       console.error('Error getting students:', error);
       return [];
     }
   }
   public async getCourseNameById(courseId: number): Promise<string> {
-   
     try {
-      const response = await this._sphttpclient.get(
-        `${this.relativeUrl}/_api/web/lists/getbytitle('Tantárgyak')/items(${courseId})?$select=T_x00e1_egyneve`,
-        SPHttpClient.configurations.v1
-      );
-  
-      if (!response.ok) {
-        throw new Error('Unable to fetch course name');
-      }
-  
-      const result = await response.json();
-      return result.T_x00e1_egyneve;
+      const item: any = await this._spfi.web.lists.getByTitle('Tantárgyak').items.getById(courseId).select('T_x00e1_egyneve')();
+      return item.T_x00e1_egyneve;
     } catch (error) {
       console.error('Error getting course name:', error);
       return '';
     }
   }
-  
   }
+  
+  
   

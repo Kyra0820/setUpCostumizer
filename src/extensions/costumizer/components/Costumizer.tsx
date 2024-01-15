@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { IconButton, Panel, PanelType, Pivot, PivotItem, TextField, PrimaryButton, Toggle } from '@fluentui/react';
 import SPService from '../../../services/SPService';
-import { PeoplePicker, PrincipalType } from '@pnp/spfx-controls-react/lib/PeoplePicker';
+//import { PeoplePicker, PrincipalType } from '@pnp/spfx-controls-react/lib/PeoplePicker';
 import { WebPartContext } from "@microsoft/sp-webpart-base";
 import { FieldCustomizerContext } from '@microsoft/sp-listview-extensibility';
 export interface ICostumizerProps {
@@ -127,7 +127,7 @@ export default class Costumizer extends React.Component<ICostumizerProps, ICostu
   
   
   public render(): React.ReactElement<{}> {
-    const isWebPartContext = this.props.context instanceof WebPartContext;
+    //const isWebPartContext = this.props.context instanceof WebPartContext;
 
     return (
       <div>
@@ -159,17 +159,21 @@ export default class Costumizer extends React.Component<ICostumizerProps, ICostu
               <PrimaryButton text="Mentés" onClick={this.onSave} style={{ marginTop: '20px' }} />
             </PivotItem>
             <PivotItem headerText="Diákok">
-              {isWebPartContext && this.state.students.map((student, index) => (
-                <PeoplePicker
-                  key={index}
-                  context={this.props.context as WebPartContext}
-                  personSelectionLimit={1}
-                  principalTypes={[PrincipalType.User]}
-                  defaultSelectedUsers={[student.email]}
-                  disabled={true}
-                />
-              ))}
-            </PivotItem>
+                {this.state.students.length > 0 ? (
+                  <ul>
+                    {this.state.students[0].students.map((student: { Title: any; }, index: React.Key | null | undefined) => (
+                      <li key={index}>
+                        {student.Title || 'Ismeretlen diák'}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>Nincsenek diákok ebben a tantárgyban.</p>
+                )}
+              </PivotItem>
+
+
+
           </Pivot>
         </Panel>
       </div>
