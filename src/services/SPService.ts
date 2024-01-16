@@ -190,32 +190,38 @@ public async AddGearIconFieldCustomizerToList(columnName: string): Promise<void>
 
 
   public async updateCourseData(listId: string, itemId: number, courseData: any): Promise<void> {
-    const endpoint: string = `https://kyra1025.sharepoint.com/sites/Adatlistak/_api/web/lists(guid'${listId}')/items(${itemId})`;
-  
-    const headers = {
-      'Accept': 'application/json;odata=nometadata',
-      'Content-Type': 'application/json;odata=nometadata',
-      'IF-MATCH': '*',
-      'X-HTTP-Method': 'MERGE'
-    };
-  
-    const body = JSON.stringify(courseData);
-  
+    const endpoint = `https://kyra1025.sharepoint.com/sites/Adatlistak/_api/web/lists(guid'${listId}')/items(${itemId})/validateupdatelistitem`;
+
+    const formValues = Object.keys(courseData).map(key => {
+        return {
+            'FieldName': key,
+            'FieldValue': courseData[key].toString()
+        };
+    });
+
+    const body = JSON.stringify({
+        'formValues': formValues,
+        'bNewDocumentUpdate': false
+    });
+
+   
+
     try {
-      const response = await this._sphttpclient.post(endpoint, SPHttpClient.configurations.v1, {
-        headers,
-        body
-      });
-  
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Hiba történt az elem frissítésekor: ${errorText}`);
-      }
+        const response = await this._sphttpclient.post(endpoint, SPHttpClient.configurations.v1, {
+            body
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Hiba történt az elem frissítésekor: ${errorText}`);
+        }
     } catch (error) {
-      console.error('Hiba történt a lista elem frissítésekor:', error);
-      throw error;
+        console.error('Hiba történt a lista elem frissítésekor:', error);
+        throw error;
     }
-  }
+}
+
+  
   public async getStudentsByCourse(courseName: string): Promise<any[]> {
     try {
       const items: any[] = await this._spfi.web.lists.getByTitle('Students').items
