@@ -198,7 +198,7 @@ public async AddGearIconFieldCustomizerToList(columnName: string): Promise<void>
         if (typeof value === 'object' && value !== null && 'Url' in value) {
           return {
             FieldName: key,
-            FieldValue: `${value.Url}, ${value.Url}`
+            FieldValue: `${value.Description}, ${value.Url}`
           };
         } else {
           return {
