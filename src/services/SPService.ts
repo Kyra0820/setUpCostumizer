@@ -190,33 +190,34 @@ public async AddGearIconFieldCustomizerToList(columnName: string): Promise<void>
 
 
   public async updateCourseData(listId: string, itemId: number, courseData: any): Promise<void> {
-    const endpoint = `https://kyra1025.sharepoint.com/sites/Adatlistak/_api/web/lists(guid'${listId}')/items(${itemId})/validateupdatelistitem`;
-
-    const formValues = Object.keys(courseData).map(key => {
-        return {
-            'FieldName': key,
-            'FieldValue': courseData[key].toString()
-        };
-    });
-
-    const body = JSON.stringify({
-        'formValues': formValues,
-        'bNewDocumentUpdate': false
-    });
     try {
-        const response = await this._sphttpclient.post(endpoint, SPHttpClient.configurations.v1, {
-            body
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Hiba történt az elem frissítésekor: ${errorText}`);
+      const formValues = Object.keys(courseData).map(key => {
+        const value = courseData[key];
+      
+    
+        if (typeof value === 'object' && value !== null && 'Url' in value) {
+          return {
+            FieldName: key,
+            FieldValue: `${value.Url}, ${value.Url}`
+          };
+        } else {
+          return {
+            FieldName: key,
+            FieldValue: value?.toString() || ""
+          };
         }
+      });
+      
+      
+      
+      await this._spfi.web.lists.getById(listId).items.getById(itemId).validateUpdateListItem(formValues);
+  
     } catch (error) {
-        console.error('Hiba történt a lista elem frissítésekor:', error);
-        throw error;
+      console.error('Hiba történt a lista elem frissítésekor:', error);
+      throw error;
     }
-}
+  }
+  
 
   
   public async getStudentsByCourse(courseName: string): Promise<any[]> {

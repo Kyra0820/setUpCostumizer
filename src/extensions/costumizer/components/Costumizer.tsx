@@ -96,7 +96,7 @@ export default class Costumizer extends React.Component<ICostumizerProps, ICostu
 
   private onSave = async (): Promise<void> => {
     const { listId, itemId } = this.props;
-    const { courseName, teachers, isActive, capacity, description, classroom, link, isFull } = this.state;
+    const { courseName, teachers, isActive, capacity, description, link, classroom, isFull } = this.state;
   
     if (!listId || !itemId) {
       console.error('listId vagy itemId nincs megadva.');
@@ -112,15 +112,31 @@ export default class Costumizer extends React.Component<ICostumizerProps, ICostu
       Link: { Url: link },
       Tanterem: classroom,
       Megtelt: isFull,
-      //OData__x00c9_p_x00fc_let: building - ha szükséges
     };
+  
     try {
       await SPService.current.updateCourseData(listId, itemId, courseData);
+  
+      const updatedCourseData = await SPService.current.getCourseData(listId, itemId);
+  
+      this.setState({
+        courseName: updatedCourseData.T_x00e1_egyneve || '',
+        teachers: updatedCourseData.Tan_x00e1_rok || '',
+        isActive: updatedCourseData.Akt_x00ed_v_x0028_tan_x00ed_tj_x || false,
+        capacity: updatedCourseData.L_x00e9_tsz_x00e1_m || 0,
+        description: updatedCourseData.R_x00f6_vidle_x00ed_r_x00e1_s || '',
+        link: updatedCourseData.Link?.Url || '',
+        classroom: updatedCourseData.Tanterem || '',
+        isFull: updatedCourseData.Megtelt || false,
+        building: updatedCourseData.OData__x00c9_p_x00fc_let || ''
+      });
+  
       this.setState({ isPanelOpen: false });
     } catch (error) {
       console.error('Hiba az adatok mentésekor:', error);
     }
   };
+  
   
   
   
