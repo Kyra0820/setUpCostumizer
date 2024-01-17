@@ -203,9 +203,6 @@ public async AddGearIconFieldCustomizerToList(columnName: string): Promise<void>
         'formValues': formValues,
         'bNewDocumentUpdate': false
     });
-
-   
-
     try {
         const response = await this._sphttpclient.post(endpoint, SPHttpClient.configurations.v1, {
             body
@@ -248,6 +245,10 @@ public async AddGearIconFieldCustomizerToList(columnName: string): Promise<void>
       return '';
     }
   }
+
+
+
+  
   }
   
   

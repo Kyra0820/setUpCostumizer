@@ -22,7 +22,6 @@ export interface ICostumizerState {
   isFull: boolean;
   building: string;
   students: any[];
-  
 }
 
 export default class Costumizer extends React.Component<ICostumizerProps, ICostumizerState> {
@@ -94,11 +93,10 @@ export default class Costumizer extends React.Component<ICostumizerProps, ICostu
     this.setState({ isPanelOpen: false });
   };
 
- 
 
   private onSave = async (): Promise<void> => {
     const { listId, itemId } = this.props;
-    const { courseName, teachers, isActive, capacity, description, classroom, link, isFull} = this.state;
+    const { courseName, teachers, isActive, capacity, description, classroom, link, isFull } = this.state;
   
     if (!listId || !itemId) {
       console.error('listId vagy itemId nincs megadva.');
@@ -114,16 +112,17 @@ export default class Costumizer extends React.Component<ICostumizerProps, ICostu
       Link: { Url: link },
       Tanterem: classroom,
       Megtelt: isFull,
-      //OData__x00c9_p_x00fc_let: building
+      //OData__x00c9_p_x00fc_let: building - ha szükséges
     };
-    console.log(courseData);
     try {
-      await SPService.current.updateCourseData(listId,itemId, courseData);
-      this.setState({ isPanelOpen: false }); 
+      await SPService.current.updateCourseData(listId, itemId, courseData);
+      this.setState({ isPanelOpen: false });
     } catch (error) {
       console.error('Hiba az adatok mentésekor:', error);
     }
   };
+  
+  
   
   
   public render(): React.ReactElement<{}> {
