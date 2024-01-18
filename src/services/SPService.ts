@@ -246,7 +246,19 @@ public async AddGearIconFieldCustomizerToList(columnName: string): Promise<void>
       return '';
     }
   }
-
+  public async getAllStudents(): Promise<any[]> {
+    try {
+      const student = await this._spfi.web.lists.getByTitle('Students').items.select('Title', 'Id')();
+      return student.map((student: { Id: any; Title: any; }) => ({
+        id: student.Id,
+        text: student.Title
+      }));
+    } catch (error) {
+      console.error('Error getting all students:', error);
+      return [];
+    }
+  }
+  
 
 
   

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IconButton, Panel, PanelType, Pivot, PivotItem, TextField, PrimaryButton, Toggle } from '@fluentui/react';
+import { IconButton, Panel, PanelType, Pivot, PivotItem, TextField, PrimaryButton, Toggle, Modal } from '@fluentui/react';
 import SPService from '../../../services/SPService';
 import { PeoplePicker, PrincipalType } from '@pnp/spfx-controls-react/lib/PeoplePicker';
 import { WebPartContext } from "@microsoft/sp-webpart-base";
@@ -12,6 +12,7 @@ export interface ICostumizerProps {
 
 export interface ICostumizerState {
   isPanelOpen: boolean;
+  showModal: boolean;
   courseName: string;
   teachers: string;
   isActive: boolean;
@@ -22,6 +23,7 @@ export interface ICostumizerState {
   isFull: boolean;
   building: string;
   students: any[];
+  diakok: any[];
 }
 
 export default class Costumizer extends React.Component<ICostumizerProps, ICostumizerState> {
@@ -31,6 +33,7 @@ export default class Costumizer extends React.Component<ICostumizerProps, ICostu
     super(props);
     this.state = {
       isPanelOpen: false,
+      showModal: false,
       courseName: '',
       teachers: '',
       isActive: false,
@@ -40,7 +43,8 @@ export default class Costumizer extends React.Component<ICostumizerProps, ICostu
       classroom: '',
       isFull: false,
       building: '',
-      students: []
+      students: [],
+      diakok: []
     };
     this.context = props.context;
     
@@ -138,8 +142,18 @@ export default class Costumizer extends React.Component<ICostumizerProps, ICostu
   };
   
   
-  
-  
+  private openModal = async (): Promise<void> => {
+    const allStudents = await SPService.current.getAllStudents();
+    this.setState({ showModal: true, diakok: allStudents });
+  };
+
+  private closeStudentModal = (): void => {
+    this.setState({ showModal: false });
+  };
+  private addStudent = (): void => {
+    
+  };
+
   
   public render(): React.ReactElement<{}> {
     //const isWebPartContext = this.props.context instanceof WebPartContext;
@@ -188,12 +202,29 @@ export default class Costumizer extends React.Component<ICostumizerProps, ICostu
                 ) : (
                   <p>Nincsenek diákok ebben a tantárgyban.</p>
                 )}
+                 <PrimaryButton text="Új diák" onClick={this.openModal} style={{ marginTop: '20px' }} />
               </PivotItem>
-
-
-
           </Pivot>
         </Panel>
+        <Modal
+          isOpen={this.state.showModal}
+          onDismiss={this.closeStudentModal}
+          // További modal beállítások...
+         >
+          <div className="ms-modalExample-header" style={{ fontWeight: 'bold', fontSize: '18px', padding: '15px' }}>
+            Új diák hozzáadása
+          </div>
+          <div className="ms-modalExample-body" style={{ padding: '5px' }}>
+            <PeoplePicker
+              context={this.props.context as WebPartContext}
+              personSelectionLimit={3}
+              principalTypes={[PrincipalType.User]}
+              defaultSelectedUsers={this.state.diakok.map(student => student.text)}
+            />
+            <PrimaryButton onClick={this.addStudent} text="Hozzáadás" style={{ marginTop: '50px', marginRight: '70px' }} />
+            <PrimaryButton onClick={this.closeStudentModal} text="Mégsem" style={{ marginTop: '50px' }} />
+          </div>
+         </Modal>
       </div>
     );
   }
