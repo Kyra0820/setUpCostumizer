@@ -220,7 +220,6 @@ export default class Costumizer extends React.Component<ICostumizerProps, ICostu
         <Modal
           isOpen={this.state.showModal}
           onDismiss={this.closeStudentModal}
-          // További modal beállítások...
          >
           <div className="ms-modalExample-header" style={{ fontWeight: 'bold', fontSize: '18px', padding: '15px' }}>
             Új diák hozzáadása
@@ -231,15 +230,12 @@ export default class Costumizer extends React.Component<ICostumizerProps, ICostu
               personSelectionLimit={3}
               principalTypes={[PrincipalType.User]}
               onChange={(items: IPersonaProps[]) => {
-                // A kiválasztott diákok felhasználóneveinek gyűjtése
                 const selectedStudentNames = items
                   .map(item => item.text)
                   .filter(text => text !== undefined) as string[];
                 this.setState({ selectedStudents: selectedStudentNames });
               }}
             />
-
-
             <PrimaryButton onClick={async () => {
               await this.addStudent();
               this.closeStudentModal();

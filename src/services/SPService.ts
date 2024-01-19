@@ -297,10 +297,7 @@ public async AddGearIconFieldCustomizerToList(columnName: string): Promise<void>
 
  public async getStudentId(username: string): Promise<number> {
   try {
-    // Ellenőrizzük, hogy a felhasználó létezik-e a SharePoint-ban
     const userResult = await this._spfi.web.ensureUser(username);
-
-    // Visszaadjuk a felhasználó azonosítóját
     return userResult.data.Id;
   } catch (error) {
     console.error('Error getting user ID for username:', username, error);
