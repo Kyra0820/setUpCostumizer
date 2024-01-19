@@ -5,8 +5,10 @@ import "@pnp/sp/fields";
 import "@pnp/sp/lists"
 import "@pnp/sp/items";
 import "@pnp/sp/views";
+import "@pnp/sp/site-users/web";
 import { AddFieldOptions, IFieldAddResult } from '@pnp/sp/fields';
 import { SPHttpClient, SPHttpClientResponse} from '@microsoft/sp-http';
+//import { IWebEnsureUserResult } from '@pnp/sp/site-users/types';
 
 
 /**
@@ -258,11 +260,60 @@ public async AddGearIconFieldCustomizerToList(columnName: string): Promise<void>
       return [];
     }
   }
+  public async addStudentsToCourse(subjectTitle: string, newStudentNames: string[]): Promise<void> {
+    try {
+      const subjectItem = (await this._spfi.web.lists.getByTitle('Students').items
+        .filter(`Subject eq '${subjectTitle}'`)
+        .expand('Students')
+        .select('Id', 'Students/Id')())[0];
   
+      if (!subjectItem) {
+        console.error('Subject not found:', subjectTitle);
+        return;
+      }
+      console.log(subjectTitle);
+      const users =  await Promise.all(newStudentNames.map(name => this._spfi.web.ensureUser(name)));
 
+      const existingStudentIds : number[] = subjectItem.Students.map((s: { Id: any; }) => s.Id);
+      const userIds = users.map(user => user.data.Id);
 
-  
+      existingStudentIds.push(...userIds);
+    
+     
+        await this._spfi.web.lists.getByTitle('Students').items.getById(subjectItem.Id).update({
+          StudentsId: existingStudentIds 
+         
+        });
+       
+      } 
+     catch (error) {
+      console.error('Error adding students to course:', error);
+    }
   }
+  
+  
+  
+
+
+ public async getStudentId(username: string): Promise<number> {
+  try {
+    // Ellenőrizzük, hogy a felhasználó létezik-e a SharePoint-ban
+    const userResult = await this._spfi.web.ensureUser(username);
+
+    // Visszaadjuk a felhasználó azonosítóját
+    return userResult.data.Id;
+  } catch (error) {
+    console.error('Error getting user ID for username:', username, error);
+    return -1;
+  }
+}
+
+}
+
+
+
+  
+  
   
   
   

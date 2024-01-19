@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IconButton, Panel, PanelType, Pivot, PivotItem, TextField, PrimaryButton, Toggle, Modal } from '@fluentui/react';
+import { IconButton, Panel, PanelType, Pivot, PivotItem, TextField, PrimaryButton, Toggle, Modal, IPersonaProps } from '@fluentui/react';
 import SPService from '../../../services/SPService';
 import { PeoplePicker, PrincipalType } from '@pnp/spfx-controls-react/lib/PeoplePicker';
 import { WebPartContext } from "@microsoft/sp-webpart-base";
@@ -24,6 +24,7 @@ export interface ICostumizerState {
   building: string;
   students: any[];
   diakok: any[];
+  selectedStudents: string[];
 }
 
 export default class Costumizer extends React.Component<ICostumizerProps, ICostumizerState> {
@@ -44,7 +45,8 @@ export default class Costumizer extends React.Component<ICostumizerProps, ICostu
       isFull: false,
       building: '',
       students: [],
-      diakok: []
+      diakok: [],
+      selectedStudents: []
     };
     this.context = props.context;
     
@@ -150,13 +152,22 @@ export default class Costumizer extends React.Component<ICostumizerProps, ICostu
   private closeStudentModal = (): void => {
     this.setState({ showModal: false });
   };
-  private addStudent = (): void => {
-    
-  };
+  private addStudent = async (): Promise<void> => {
+    try {
+        await SPService.current.addStudentsToCourse(this.state.courseName, this.state.selectedStudents);
+
+        const updatedStudents = await SPService.current.getStudentsByCourse(this.state.courseName);
+
+        this.setState({ students: updatedStudents });
+
+    } catch (error) {
+        console.error('Error adding students:', error);
+    }
+}
+
 
   
   public render(): React.ReactElement<{}> {
-    //const isWebPartContext = this.props.context instanceof WebPartContext;
 
     return (
       <div>
@@ -215,13 +226,24 @@ export default class Costumizer extends React.Component<ICostumizerProps, ICostu
             Új diák hozzáadása
           </div>
           <div className="ms-modalExample-body" style={{ padding: '5px' }}>
-            <PeoplePicker
+          <PeoplePicker
               context={this.props.context as WebPartContext}
               personSelectionLimit={3}
               principalTypes={[PrincipalType.User]}
-              defaultSelectedUsers={this.state.diakok.map(student => student.text)}
+              onChange={(items: IPersonaProps[]) => {
+                // A kiválasztott diákok felhasználóneveinek gyűjtése
+                const selectedStudentNames = items
+                  .map(item => item.text)
+                  .filter(text => text !== undefined) as string[];
+                this.setState({ selectedStudents: selectedStudentNames });
+              }}
             />
-            <PrimaryButton onClick={this.addStudent} text="Hozzáadás" style={{ marginTop: '50px', marginRight: '70px' }} />
+
+
+            <PrimaryButton onClick={async () => {
+              await this.addStudent();
+              this.closeStudentModal();
+          }}  text="Hozzáadás" style={{ marginTop: '50px', marginRight: '70px' }} />
             <PrimaryButton onClick={this.closeStudentModal} text="Mégsem" style={{ marginTop: '50px' }} />
           </div>
          </Modal>
