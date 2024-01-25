@@ -304,6 +304,32 @@ public async AddGearIconFieldCustomizerToList(columnName: string): Promise<void>
     return -1;
   }
 }
+public async removeStudentFromCourse(courseName: string, studentId: number): Promise<void> {
+  try {
+    const subjectItem = (await this._spfi.web.lists.getByTitle('Students').items
+      .filter(`Subject eq '${courseName}'`)
+      .expand('Students')
+      .select('Id', 'Students/Id')())[0];
+
+    if (!subjectItem) {
+      console.error('Tantárgy nem található:', courseName);
+      return;
+    }
+
+    const updatedStudents = subjectItem.Students
+      .filter((s: { Id: number; }) => s.Id !== studentId)
+      .map((s: { Id: number; }) => s.Id);
+
+    await this._spfi.web.lists.getByTitle('Students').items.getById(subjectItem.Id).update({
+      StudentsId: updatedStudents 
+    });
+
+  } catch (error) {
+    console.error('Hiba történt a diák eltávolításakor a tantárgyból:', error);
+  }
+}
+
+
 
 }
 

@@ -86,6 +86,7 @@ export default class Costumizer extends React.Component<ICostumizerProps, ICostu
         const students = await SPService.current.getStudentsByCourse(courseName);
         console.log(students);
         this.setState({ students });
+
       }
 
    
@@ -165,6 +166,27 @@ export default class Costumizer extends React.Component<ICostumizerProps, ICostu
     }
 }
 
+handlePeoplePickerChange(changedPeople: string | any[], removedStudentId: any) {
+  if (changedPeople.length < 1) {
+    this.setState(prevState => ({
+      students: prevState.students.map(course => ({
+        ...course,
+        students: course.students.filter((student: { Id: any; }) => student.Id !== removedStudentId)
+      }))
+    }));
+
+
+    const courseName = this.state.courseName; 
+    SPService.current.removeStudentFromCourse(courseName, removedStudentId)
+      .then(() => {
+        console.log("Diák sikeresen eltávolítva a tantárgyból.");
+      })
+      .catch(error => {
+        console.error("Hiba történt a diák eltávolításakor:", error);
+      });
+  }
+}
+
 
   
   public render(): React.ReactElement<{}> {
@@ -199,22 +221,26 @@ export default class Costumizer extends React.Component<ICostumizerProps, ICostu
               <PrimaryButton text="Mentés" onClick={this.onSave} style={{ marginTop: '20px' }} />
             </PivotItem>
             <PivotItem headerText="Diákok">
-                {this.state.students.length > 0 ? (
-                  <ul>
-                    {this.state.students[0].students.map((student: { Title: any; }, index: React.Key | null | undefined) => (
-                       <PeoplePicker
-                        context={this.props.context as WebPartContext}
-                        personSelectionLimit={1}
-                        principalTypes={[PrincipalType.User]}
-                        defaultSelectedUsers={[student.Title]}
-                     />
-                    ))}
-                  </ul>
-                ) : (
-                  <p>Nincsenek diákok ebben a tantárgyban.</p>
-                )}
-                 <PrimaryButton text="Új diák" onClick={this.openModal} style={{ marginTop: '20px' }} />
-              </PivotItem>
+              {this.state.students.length > 0 && this.state.students[0].students ? (
+                <ul>
+                  {this.state.students[0].students.map((student: {
+                    [x: string]: any; Title: string; 
+}) => (
+                    <PeoplePicker
+                      context={this.props.context as WebPartContext}
+                      personSelectionLimit={1}
+                      principalTypes={[PrincipalType.User]}
+                      defaultSelectedUsers={[student.Title]}
+                      onChange={(changedPeople) => this.handlePeoplePickerChange(changedPeople, student.Id)}
+                  />
+                  ))}
+                </ul>
+              ) : (
+                <p>Nincsenek diákok ebben a tantárgyban.</p>
+              )}
+              <PrimaryButton text="Új diák" onClick={this.openModal} style={{ marginTop: '20px' }} />
+            </PivotItem>
+
           </Pivot>
         </Panel>
         <Modal
