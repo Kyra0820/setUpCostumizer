@@ -1,0 +1,22 @@
+{
+    "add_column": "Add column",
+    "text": "Column has already been added",
+    "add_fieldcostumizer": "Add field costumizer",
+    "subject_deatalis": "Subject deatails",
+    "base_data": "Base data",
+    "students": "Students",
+    "save": "Save",
+    "new_student": "New student",
+    "cancel": "Cancel",
+    "subject": "Subject name",
+    "teachers": "Teachers",
+    "active": "Active",
+    "number": "Number of students",
+    "short_description": "Short description",
+    "classroom": "Classroom",
+    "building": "building",
+    "students_description": "There are not students in the list",
+    "new_student_add": "Add new student",
+    "add": "Add"
+
+}

@@ -25,6 +25,14 @@
           "manifest": "./src/extensions/costumizer/CostumizerFieldCustomizer.manifest.json"
         }
       ]
+    },
+    "list-view-command-set": {
+      "components": [
+        {
+          "entrypoint": "./lib/extensions/listView/ListViewCommandSet.js",
+          "manifest": "./src/extensions/listView/ListViewCommandSet.manifest.json"
+        }
+      ]
     }
   },
   "externals": {},
@@ -32,6 +40,7 @@
     "SetUpCostumizerWebPartStrings": "lib/webparts/setUpCostumizer/loc/{locale}.js",
     "FieldCostumizerFieldCustomizerStrings": "lib/extensions/fieldCostumizer/loc/{locale}.js",
     "CostumizerFieldCustomizerStrings": "lib/extensions/costumizer/loc/{locale}.js",
-    "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js"
+    "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js",
+    "ListViewCommandSetStrings": "lib/extensions/listView/loc/{locale}.js"
   }
 }

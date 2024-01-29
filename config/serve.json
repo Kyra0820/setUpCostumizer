@@ -13,6 +13,15 @@
             "sampleText": "Value"
           }
         }
+      },
+      "customActions": {
+        "9c250e57-5973-4214-96a0-0a4a225a23a9": {
+          "location": "ClientSideExtension.ListViewCommandSet.CommandBar",
+          "properties": {
+            "sampleTextOne": "One item is selected in the list",
+            "sampleTextTwo": "This command is always visible."
+          }
+        }
       }
     },
     "fieldCostumizer": {
@@ -33,6 +42,18 @@
           "id": "8d0a27e2-1e34-4151-a29f-c4709b8b1df9",
           "properties": {
             "sampleText": "Value"
+          }
+        }
+      }
+    },
+    "listView": {
+      "pageUrl": "https://kyra1025.sharepoint.com/sites/Adatlistak/Lists/Tantrgyak/AllItems.aspx",
+      "customActions": {
+        "9c250e57-5973-4214-96a0-0a4a225a23a9": {
+          "location": "ClientSideExtension.ListViewCommandSet.CommandBar",
+          "properties": {
+            "sampleTextOne": "One item is selected in the list",
+            "sampleTextTwo": "This command is always visible."
           }
         }
       }
