@@ -1,0 +1,21 @@
+{
+    "add_column": "Oszlop hozzáadása",
+    "text": "Az oszlop már hozzáadásra került",
+    "add_fieldcostumizer": "Mező testreszabó hozzáadása",
+    "subject_deatalis": "Tantárgy részletei",
+    "base_data": "Alapadatok",
+    "students": "Diákok",
+    "save": "Mentés",
+    "new_student": "Új diák",
+    "cancel": "Mégse",
+    "subject": "Tantárgy neve",
+    "teachers": "Tanárok",
+    "active": "Aktív",
+    "number": "Diákok száma",
+    "short_description": "Rövid leírás",
+    "classroom": "Tanterem",
+    "building": "Épület",
+    "students_description": "Nincsenek diákok a listában",
+    "new_student_add": "Új diák hozzáadása",
+    "add": "Hozzáad"
+}

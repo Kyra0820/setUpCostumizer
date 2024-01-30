@@ -4,6 +4,10 @@ import SPService from '../../../services/SPService';
 import { PeoplePicker, PrincipalType } from '@pnp/spfx-controls-react/lib/PeoplePicker';
 import { WebPartContext } from "@microsoft/sp-webpart-base";
 import { FieldCustomizerContext } from '@microsoft/sp-listview-extensibility';
+import englishTranslations from '../../../translations/translation.json';
+import hungarianTranslations from '../../../translations/translation_hu.json';
+
+
 export interface ICostumizerProps {
   listId?: string;
   itemId: number; 
@@ -25,7 +29,7 @@ export interface ICostumizerState {
   students: any[];
   diakok: any[];
   selectedStudents: string[];
-  translations?: { [key: string]: string };
+  translations: { [key: string]: string };
 }
 
 export default class Costumizer extends React.Component<ICostumizerProps, ICostumizerState> {
@@ -59,10 +63,12 @@ export default class Costumizer extends React.Component<ICostumizerProps, ICostu
     }
   }
   componentDidMount() {
-    fetch('src/translation.json')
-      .then(response => response.json())
-      .then(translations => this.setState({ translations }));
+    const browserLanguage = navigator.language;
+    const isHungarian = browserLanguage.startsWith('hu');
+    const translations = isHungarian ? hungarianTranslations : englishTranslations;
+    this.setState({ translations });
   }
+  
   
   
   private onIconButtonClick = async (): Promise<void> => {
@@ -208,29 +214,29 @@ const { translations } = this.state;
           isOpen={this.state.isPanelOpen}
           onDismiss={this.onClosePanel}
           type={PanelType.smallFixedFar}
-          headerText={translations?.subject_details || "Tantárgy Információk"}
+          headerText={translations.subject_details || "Subject details"}
         >
-          <Pivot aria-label={translations?.subject_details || "Tantárgy Információk"}>
-            <PivotItem headerText={translations?.base_data ||"Alapadatok"}>
-              <TextField label={translations?.subject || "Tantárgy neve"} value={this.state.courseName} onChange={(e, newValue) => this.setState({ courseName: newValue || '' })} />
-              <TextField label={translations?.teachers || "Tanárok"} value={this.state.teachers} onChange={(e, newValue) => this.setState({ teachers: newValue || '' })} />
-              <Toggle label={translations?.active || "Aktív"} checked={this.state.isActive} onChange={(e, checked) => this.setState({ isActive: !!checked })} />
-              <TextField label={translations?.subject_details || "Létszám"} type="number" value={this.state.capacity.toString()} onChange={(e, newValue) => {
+          <Pivot aria-label={translations.subject_details || "Subject details"}>
+            <PivotItem headerText={translations.base_data ||"Base data"}>
+            <TextField label={translations.subject || "Subject name"} value={this.state.courseName} onChange={(e, newValue) => this.setState({ courseName: newValue || '' })} />
+
+              <TextField label={translations.teachers || "Teachers"} value={this.state.teachers} onChange={(e, newValue) => this.setState({ teachers: newValue || '' })} />
+              <Toggle label={translations.active || "Active"} checked={this.state.isActive} onChange={(e, checked) => this.setState({ isActive: !!checked })} />
+              <TextField label={translations.subject_details || "Number of students"} type="number" value={this.state.capacity.toString()} onChange={(e, newValue) => {
                 const newCapacity = newValue ? parseInt(newValue, 10) : 0;
                 this.setState({ capacity: newCapacity });
               }} />
-              <TextField label={translations?.short_description || "Rövid leírás"} value={this.state.description} onChange={(e, newValue) => this.setState({ description: newValue || '' })} />
+              <TextField label={translations.short_description || "Short description"} value={this.state.description} onChange={(e, newValue) => this.setState({ description: newValue || '' })} />
               <TextField label="Link" value={this.state.link} onChange={(e, newValue) => this.setState({ link: newValue || '' })} />
-              <TextField label={translations?.classroom || "Terem"} value={this.state.classroom} onChange={(e, newValue) => this.setState({ classroom: newValue || '' })} />
-              <TextField label={translations?.building || "Épület"} value={this.state.building} onChange={(e, newValue) => this.setState({ building: newValue || '' })} />
-              <PrimaryButton text={translations?.save || "Mentés"} onClick={this.onSave} style={{ marginTop: '20px' }} />
+              <TextField label={translations.classroom || "Classroom"} value={this.state.classroom} onChange={(e, newValue) => this.setState({ classroom: newValue || '' })} />
+              <TextField label={translations.building || "Building"} value={this.state.building} onChange={(e, newValue) => this.setState({ building: newValue || '' })} />
+              <PrimaryButton text={translations.save || "Save"} onClick={this.onSave} style={{ marginTop: '20px' }} />
             </PivotItem>
-            <PivotItem headerText={translations?.students || "Diákok"}>
+            <PivotItem headerText={translations.students || "Students"}>
               {this.state.students.length > 0 && this.state.students[0].students ? (
                 <ul>
                   {this.state.students[0].students.map((student: {
-                    [x: string]: any; Title: string; 
-}) => (
+                    [x: string]: any; Title: string; }) => (
                     <PeoplePicker
                       context={this.props.context as WebPartContext}
                       personSelectionLimit={1}
@@ -241,9 +247,9 @@ const { translations } = this.state;
                   ))}
                 </ul>
               ) : (
-                <p>{translations?.students_description || "Nincsenek diákok a listában"}</p>
+                <p>{translations.students_description || "There are not students in the list"}</p>
               )}
-              <PrimaryButton text={translations?.new_student || "Új diák"} onClick={this.openModal} style={{ marginTop: '20px' }} />
+              <PrimaryButton text={translations.new_student || "New student"} onClick={this.openModal} style={{ marginTop: '20px' }} />
             </PivotItem>
 
           </Pivot>
@@ -253,7 +259,7 @@ const { translations } = this.state;
           onDismiss={this.closeStudentModal}
          >
           <div className="ms-modalExample-header" style={{ fontWeight: 'bold', fontSize: '18px', padding: '15px' }}>
-          {translations?.new_student_add || "Új diák hozzáadása"}
+          {translations.new_student_add || "Add new student"}
           </div>
           <div className="ms-modalExample-body" style={{ padding: '5px' }}>
           <PeoplePicker
@@ -270,7 +276,7 @@ const { translations } = this.state;
             <PrimaryButton onClick={async () => {
               await this.addStudent();
               this.closeStudentModal();
-          }}  text={translations?.add || "Hozzáadás"} style={{ marginTop: '50px', marginRight: '70px' }} />
+          }}  text={translations.add || "Add"} style={{ marginTop: '50px', marginRight: '70px' }} />
             <PrimaryButton onClick={this.closeStudentModal} text={translations?.cancel || "Cancel"} style={{ marginTop: '50px' }} />
           </div>
          </Modal>

@@ -14,6 +14,8 @@
     "inlineSources": false,
     "noImplicitAny": true,
     "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
 
     "typeRoots": [
       "./node_modules/@types",
@@ -26,7 +28,8 @@
       "es5",
       "dom",
       "es2015.collection",
-      "es2015.promise"
+      "es2015.promise",
+      "es2015"
     ]
   },
   "include": [
