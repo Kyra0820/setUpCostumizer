@@ -7,14 +7,14 @@ import { FieldCustomizerContext } from '@microsoft/sp-listview-extensibility';
 import englishTranslations from '../../../translations/translation.json';
 import hungarianTranslations from '../../../translations/translation_hu.json';
 
-
-export interface ICostumizerProps {
+// Interfészek a komponens props és state típusainak definiálásához
+export interface ICustomizerProps {
   listId?: string;
   itemId: number; 
   context?: WebPartContext | FieldCustomizerContext; 
 }
 
-export interface ICostumizerState {
+export interface ICustomizerState {
   isPanelOpen: boolean;
   showModal: boolean;
   courseName: string;
@@ -32,10 +32,11 @@ export interface ICostumizerState {
   translations: { [key: string]: string };
 }
 
-export default class Costumizer extends React.Component<ICostumizerProps, ICostumizerState> {
-
-  constructor(props: ICostumizerProps) {
+// Customizer komponens definíciója
+export default class Customizer extends React.Component<ICustomizerProps, ICustomizerState> {
+  constructor(props: ICustomizerProps) {
     super(props);
+    // Kezdeti állapot beállítása
     this.state = {
       isPanelOpen: false,
       showModal: false,
@@ -54,30 +55,25 @@ export default class Costumizer extends React.Component<ICostumizerProps, ICostu
       translations: {}
     };
     this.context = props.context;
-
-  
-
-
-    if (!this.props.listId || !this.props.itemId) {
-      console.error('listName vagy itemId nincs inicializálva.');
-    }
   }
+
+  // Komponens betöltésekor lefutó metódus
   componentDidMount() {
     const browserLanguage = navigator.language;
     const isHungarian = browserLanguage.startsWith('hu');
+    // Nyelvi beállítások alkalmazása
     const translations = isHungarian ? hungarianTranslations : englishTranslations;
     this.setState({ translations });
   }
-  
-  
-  
+
+  // IconButton kattintásakor lefutó eseménykezelő
   private onIconButtonClick = async (): Promise<void> => {
     try {
-     
+      // Kurzusadatok lekérése a SPService használatával
       const courseData = await SPService.current.getCourseData(this.props.listId || '', this.props.itemId);
 
       if (courseData) {
-     
+        // Állapot frissítése az új kurzusadatokkal
         this.setState({
           courseName: courseData.T_x00e1_egyneve || '',
           teachers: courseData.Tan_x00e1_rok || '',
@@ -89,38 +85,31 @@ export default class Costumizer extends React.Component<ICostumizerProps, ICostu
           isFull: courseData.Megtelt || false,
           building: courseData.OData__x00c9_p_x00fc_let || ''
         });
-
-   
-        const courseId = this.props.itemId;
-        const courseName = await SPService.current.getCourseNameById(courseId);
-        console.log(courseName);
-        const students = await SPService.current.getStudentsByCourse(courseName);
-        console.log(students);
-        this.setState({ students });
-
       }
 
-   
+      // Panel megnyitása
       this.setState({ isPanelOpen: true });
     } catch (error) {
       console.error('Hiba történt az adatok betöltésekor:', error);
     }
   };
 
+  // Panel bezárása
   private onClosePanel = (): void => {
     this.setState({ isPanelOpen: false });
   };
 
- 
+  // Mentés gomb eseménykezelője
   private onSave = async (): Promise<void> => {
     const { listId, itemId } = this.props;
     const { courseName, teachers, isActive, capacity, description, link, classroom, isFull } = this.state;
-  
+
     if (!listId || !itemId) {
       console.error('listId vagy itemId nincs megadva.');
       return;
     }
-  
+
+    // Kurzusadatok összeállítása
     const courseData = {
       T_x00e1_egyneve: courseName,
       Tan_x00e1_rok: teachers,
@@ -131,12 +120,15 @@ export default class Costumizer extends React.Component<ICostumizerProps, ICostu
       Tanterem: classroom,
       Megtelt: isFull,
     };
-  
+
     try {
+      // Kurzusadatok frissítése a SPService használatával
       await SPService.current.updateCourseData(listId, itemId, courseData);
-  
+
+      // Frissített kurzusadatok lekérése
       const updatedCourseData = await SPService.current.getCourseData(listId, itemId);
-  
+
+      // Állapot frissítése a frissített kurzusadatokkal
       this.setState({
         courseName: updatedCourseData.T_x00e1_egyneve || '',
         teachers: updatedCourseData.Tan_x00e1_rok || '',
@@ -148,60 +140,66 @@ export default class Costumizer extends React.Component<ICostumizerProps, ICostu
         isFull: updatedCourseData.Megtelt || false,
         building: updatedCourseData.OData__x00c9_p_x00fc_let || ''
       });
-  
+
+      // Panel bezárása
       this.setState({ isPanelOpen: false });
     } catch (error) {
       console.error('Hiba az adatok mentésekor:', error);
     }
   };
-  
-  
+
+  // Modal megnyitása
   private openModal = async (): Promise<void> => {
+    // Összes diák lekérése
     const allStudents = await SPService.current.getAllStudents();
     this.setState({ showModal: true, diakok: allStudents });
   };
 
+  // Modal bezárása
   private closeStudentModal = (): void => {
     this.setState({ showModal: false });
   };
+
+  // Új diák hozzáadása
   private addStudent = async (): Promise<void> => {
     try {
-        await SPService.current.addStudentsToCourse(this.state.courseName, this.state.selectedStudents);
+      await SPService.current.addStudentsToCourse(this.state.courseName, this.state.selectedStudents);
 
-        const updatedStudents = await SPService.current.getStudentsByCourse(this.state.courseName);
+      // Frissített diáklista lekérése
+      const updatedStudents = await SPService.current.getStudentsByCourse(this.state.courseName);
 
-        this.setState({ students: updatedStudents });
-
+      // Állapot frissítése az új diáklistával
+      this.setState({ students: updatedStudents });
     } catch (error) {
-        console.error('Error adding students:', error);
+      console.error('Error adding students:', error);
     }
-}
-
-handlePeoplePickerChange(changedPeople: string | any[], removedStudentId: any) {
-  if (changedPeople.length < 1) {
-    this.setState(prevState => ({
-      students: prevState.students.map(course => ({
-        ...course,
-        students: course.students.filter((student: { Id: any; }) => student.Id !== removedStudentId)
-      }))
-    }));
-
-
-    const courseName = this.state.courseName; 
-    SPService.current.removeStudentFromCourse(courseName, removedStudentId)
-      .then(() => {
-        console.log("Diák sikeresen eltávolítva a tantárgyból.");
-      })
-      .catch(error => {
-        console.error("Hiba történt a diák eltávolításakor:", error);
-      });
   }
-}
 
+  // PeoplePicker változásának kezelése
+  handlePeoplePickerChange(changedPeople: string | any[], removedStudentId: any) {
+    if (changedPeople.length < 1) {
+      this.setState(prevState => ({
+        students: prevState.students.map(course => ({
+          ...course,
+          students: course.students.filter((student: { Id: any; }) => student.Id !== removedStudentId)
+        }))
+      }));
 
-  
+      // Diák eltávolítása a kurzusról
+      const courseName = this.state.courseName; 
+      SPService.current.removeStudentFromCourse(courseName, removedStudentId)
+        .then(() => {
+          console.log("Diák sikeresen eltávolítva a tantárgyból.");
+        })
+        .catch(error => {
+          console.error("Hiba történt a diák eltávolításakor:", error);
+        });
+    }
+  }
+
+  // A komponens renderelése
   public render(): React.ReactElement<{}> {
-const { translations } = this.state;
+    const { translations } = this.state;
     return (
       <div>
         <IconButton
@@ -218,7 +216,7 @@ const { translations } = this.state;
         >
           <Pivot aria-label={translations.subject_details || "Subject details"}>
             <PivotItem headerText={translations.base_data ||"Base data"}>
-            <TextField label={translations.subject || "Subject name"} value={this.state.courseName} onChange={(e, newValue) => this.setState({ courseName: newValue || '' })} />
+              <TextField label={translations.subject || "Subject name"} value={this.state.courseName} onChange={(e, newValue) => this.setState({ courseName: newValue || '' })} />
 
               <TextField label={translations.teachers || "Teachers"} value={this.state.teachers} onChange={(e, newValue) => this.setState({ teachers: newValue || '' })} />
               <Toggle label={translations.active || "Active"} checked={this.state.isActive} onChange={(e, checked) => this.setState({ isActive: !!checked })} />
@@ -235,8 +233,7 @@ const { translations } = this.state;
             <PivotItem headerText={translations.students || "Students"}>
               {this.state.students.length > 0 && this.state.students[0].students ? (
                 <ul>
-                  {this.state.students[0].students.map((student: {
-                    [x: string]: any; Title: string; }) => (
+                  {this.state.students[0].students.map((student: { [x: string]: any; Title: string; }) => (
                     <PeoplePicker
                       context={this.props.context as WebPartContext}
                       personSelectionLimit={1}
@@ -284,4 +281,3 @@ const { translations } = this.state;
     );
   }
 }
-
