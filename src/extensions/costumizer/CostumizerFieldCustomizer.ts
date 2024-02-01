@@ -8,7 +8,7 @@ import {
 } from '@microsoft/sp-listview-extensibility';
 
 
-import Costumizer, { ICostumizerProps } from './components/Costumizer';
+import Costumizer, { ICustomizerProps } from './components/Costumizer';
 import SPService from '../../services/SPService';
 
 /**
@@ -36,7 +36,7 @@ export default class CostumizerFieldCustomizer
 
     public onRenderCell(event: IFieldCustomizerCellEventParameters): void {
       
-      const props: ICostumizerProps = {
+      const props: ICustomizerProps = {
         itemId: event.listItem.getValueByName('ID'),
         listId: this.context.pageContext.list?.id.toString(),
         context: this.context  
